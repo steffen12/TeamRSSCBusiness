@@ -1,0 +1,43 @@
+def createCorrelationCoefficientHelperArray(userDataArray, totalUsers, numAttributes):
+	print("Creating Correlation Coefficient Helper Array")
+	correlationCoefficientHelperArray = [[]] #This array contains the standard deviation of each locus
+	for row in range(0, totalUsers):
+		user = userDataArray[(numAttributes*row):(numAttributes*(row+1))]
+		userMean, userVariance = 0, 0
+		for attribute in range(0, numAttributes):
+			userMean += user[attribute]
+		userMean /= numAttributes
+		for attribute in range(0, numAttributes):
+			userVariance += (user[attribute]-userMean)**2
+		userVariance /= numAttributes
+		locusStandardDev = (userVariance)**(.5)
+		correlationCoefficientHelperArray.append([userMean, locusStandardDev])
+	del correlationCoefficientHelperArray[0]
+	return(correlationCoefficientHelperArray)
+
+def calcCorrelationCoefficient(user1, user2, user1Row, user2Row, numAttributes, correlationCoefficientHelperArray):
+		#("Calculating Correlation Coefficient")
+		covariance = 0
+		user1Mean = correlationCoefficientHelperArray[user1Row][0]
+		user2Mean = correlationCoefficientHelperArray[user2Row][0]
+		user1StandardDev = correlationCoefficientHelperArray[user1Row][1]
+		user2StandardDev = correlationCoefficientHelperArray[user2Row][1]
+		for index in range(0,numAttributes):
+			covariance += (user1[index]-user1Mean)*(user2[index]-user2Mean)
+		covariance /= numAttributes
+		correlationCoefficient = covariance/(user1StandardDev*user2StandardDev)
+		return(correlationCoefficient) #should this be r^2?
+
+def run():
+	userDataArray = [1,7,1,7]
+	totalUsers = 2
+	numAttributes = 2
+	user1Row = 0
+	user2Row = 1 #0 - Based Rows
+	user1 = userDataArray[user1Row*numAttributes : (user1Row+1)*numAttributes]
+	user2 = userDataArray[user2Row*numAttributes : (user2Row+1)*numAttributes]
+
+	correlationCoefficientHelperArray = createCorrelationCoefficientHelperArray(userDataArray, totalUsers, numAttributes)
+	correlationCoefficient = calcCorrelationCoefficient(user1, user2, user1Row, user2Row, numAttributes, correlationCoefficientHelperArray)
+	matchPercentage = correlationCoefficient*100
+	print "Match Percentage:", matchPercentage
